@@ -1,6 +1,6 @@
 from database import init_db, add_link, get_links, export_links, import_links
 from checker import check_url_ssl, check_url_whois
-from reports import generate_report_csv
+from reports import save_results_pdf
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
             for link in links:
                 print(link)
         elif choice == '3':
-            generate_report_csv()
+            save_results_pdf()
         elif choice == '4':
             file_name = input("Введите имя файла для экспорта (по умолчанию: database.csv): ") or "database.csv"
             export_links(file_name)
