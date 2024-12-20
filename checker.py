@@ -122,6 +122,6 @@ if __name__ == ('__main__'):
 
     info_5 = IPWhois(ip).lookup_rdap()
     info_5 = remove_none_values(info_5)
-    pprint(f"SSl info : {info_1}")
+    print(f"SSl info : {info_1}")
 
-    pprint(info_5)
+    print(info_5)
