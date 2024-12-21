@@ -1,61 +1,83 @@
+import io
 from PyQt6.QtWidgets import QFileDialog
-from reportlab.pdfgen import canvas
+from PyPDF2 import PdfReader, PdfWriter
 from reportlab.lib.pagesizes import letter
-import textwrap
+from reportlab.pdfgen import canvas
+from datetime import datetime
 
 def save_results_pdf(url, is_ssl, google_response, whois_info):
-    try: 
-        # Открытие диалога сохранения файла
+    try:
+        # Получить текущую дату в нужном формате
+        check_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Открыть диалог сохранения файла
         file_name, _ = QFileDialog.getSaveFileName(
-            None, "Сохранить отчет", "", "PDF Files (*.pdf)"
+            None, "Save report", "", "PDF Files (*.pdf)"
         )
-        if not file_name:  # Если файл не выбран, выходим
+        if not file_name:  # Выход, если файл не выбран
             return 0
 
-        # Создаем PDF-документ
-        pdf = canvas.Canvas(file_name, pagesize=letter)
-        width, height = letter
+        # Создать PDF документ с использованием ReportLab
+        packet = io.BytesIO()
+        c = canvas.Canvas(packet, pagesize=letter)
+
+        # Используем шрифт, поддерживающий кириллицу (Times-Roman)
+        c.setFont("Helvetica", 10)
 
         # Заголовок документа
-        pdf.setFont("Helvetica-Bold", 14)
-        pdf.drawString(50, height - 50, "The result of the check URL")
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(50, 750, "The result of the URL check")
 
-        # Основной текст
-        pdf.setFont("Helvetica", 10)
-        y = height - 80  # Стартовая координата по высоте
+        # Дата проверки
+        c.setFont("Helvetica", 10)
+        y = 730  # Начальная координата по оси Y
+        c.drawString(50, y, f"Check Date: {check_date}")
+        y -= 20
 
-        # Записываем URL
-        pdf.drawString(50, y, f"URL: {url}")
+        # URL
+        c.drawString(50, y, f"URL: {url}")
         y -= 20
 
         # Результат проверки SSL
         ssl_status = "Safe" if is_ssl else "Suspicious"
-        pdf.drawString(50, y, f"The result of SSL: {ssl_status}")
+        c.drawString(50, y, f"The result of SSL: {ssl_status}")
         y -= 20
 
         # Результат Google Safe Browsing
         google_response = "Safe" if (google_response == "Безопасно") else "Suspicious"
-        pdf.drawString(50, y, f"Result Google Safe Browsing: {google_response}")
+        c.drawString(50, y, f"Result Google Safe Browsing: {google_response}")
         y -= 20
 
-        # WHOIS информация
-        pdf.drawString(50, y, "WHOIS information:")
+        # Информация WHOIS
+        c.drawString(50, y, "WHOIS information:")
         y -= 15
 
-        # Разбиваем WHOIS информацию на строки с переносами
-        whois_text = str(whois_info)  # Преобразуем в строку
-        wrapped_lines = textwrap.wrap(whois_text, width=90)  # Перенос строк по 90 символов
+        # Проходим по информации WHOIS и выводим ключ-значение
+        c.setFont("Helvetica", 10)
+        for key, value in whois_info.items():
+            # Если место на странице заканчивается, создаем новую страницу
+            if y < 50:
+                c.showPage()
+                y = 750
 
-        for line in wrapped_lines:
-            if y < 50:  # Если место на странице закончилось
-                pdf.showPage()
-                pdf.setFont("Helvetica", 10)
-                y = height - 50
-            pdf.drawString(60, y, line)
+            # Выводим ключ и значение
+            c.drawString(60, y, f"{key}: {value}")
             y -= 15
 
+        c.save()
+
+        # Записываем содержимое, созданное ReportLab, в PyPDF2
+        packet.seek(0)
+        new_pdf = PdfReader(packet)
+        writer = PdfWriter()
+
+        # Добавляем страницу, созданную ReportLab, в PdfWriter
+        writer.add_page(new_pdf.pages[0])
+
         # Сохраняем PDF
-        pdf.save()
+        with open(file_name, "wb") as output_file:
+            writer.write(output_file)
+
         return None
     except Exception as e:
         return e
