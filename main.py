@@ -5,6 +5,7 @@ from database import init_db, get_links, export_links, import_links
 from checker import check_url_ssl, check_url_whois, parse_whois_info
 from reports import save_results_pdf
 from google_save_browsing_api import check_url_safety as google_api
+from datetime import datetime
 
 
 class MainApp(QMainWindow):
@@ -23,6 +24,12 @@ class MainApp(QMainWindow):
     def check_url(self):
         """Проверка URL с выводом результатов в UI."""
         try:
+            # Получение текущей даты и времени
+            current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Добавление даты проверки в начало
+            self.ui.outputEdit.append(f'<font color="gray"><i>Дата проверки: {current_date}</i></font>')
+
             url = self.ui.textEdit.toPlainText()
             is_ssl = check_url_ssl(url)
             whois_info = check_url_whois(url)

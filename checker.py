@@ -51,17 +51,17 @@ def parse_whois_info(whois_info):
     )
 
     parsed_info = {
-        "ASN (Автономная система)": whois_info.get("asn", "N/A"),
-        "Код страны ASN": whois_info.get("asn_country_code", "N/A"),
-        "Описание ASN": whois_info.get("asn_description", "N/A"),
-        "Диапазон IP-адресов": whois_info.get("network", {}).get("cidr", "N/A"),
-        "Версия IP": whois_info.get("network", {}).get("ip_version", "N/A"),
-        "Организация": contact_info.get("name", "N/A"),
-        "Контактный Email": contact_info.get("email", [{}])[0].get("value", "N/A"),
-        "Email для жалоб (Abuse)": abuse_email,
-        "Дата регистрации": whois_info.get("network", {}).get(
-            "events", [{}]
-        )[0].get("timestamp", "N/A"),
+        "ASN (Autonomous System)": whois_info.get("asn", "N/A"),
+    "ASN Country Code": whois_info.get("asn_country_code", "N/A"),
+    "ASN Description": whois_info.get("asn_description", "N/A"),
+    "IP Range": whois_info.get("network", {}).get("cidr", "N/A"),
+    "IP Version": whois_info.get("network", {}).get("ip_version", "N/A"),
+    "Organization": contact_info.get("name", "N/A"),
+    "Contact Email": contact_info.get("email", [{}])[0].get("value", "N/A"),
+    "Abuse Email": abuse_email,
+    "Registration Date": whois_info.get("network", {}).get(
+        "events", [{}]
+    )[0].get("timestamp", "N/A"),
     }
     return parsed_info
 

@@ -4,6 +4,7 @@ from PyPDF2 import PdfReader, PdfWriter
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from datetime import datetime
+from mailSender import sendEmail
 
 def save_results_pdf(url, is_ssl, google_response, whois_info):
     try:
@@ -78,6 +79,13 @@ def save_results_pdf(url, is_ssl, google_response, whois_info):
         with open(file_name, "wb") as output_file:
             writer.write(output_file)
 
+        
+        sendEmail(  pdf_path=file_name,
+                    subject="Отчет",
+                    body="Отчет приложения Catcheck",
+                    to_email='ayzat2142@gmail.com',  # Замените на реальный email
+                    from_email='catcheckrobot@gmail.com'  # Замените на реальный email
+                )
         return None
     except Exception as e:
         return e
