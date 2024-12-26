@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import QApplication, QMainWindow,QMessageBox
 from design import Ui_MainWindow
 from database import init_db, get_links, export_links, import_links
 from checker import check_url_ssl, check_url_whois, parse_whois_info
@@ -20,7 +20,7 @@ class MainApp(QMainWindow):
         self.ui.pushButton_3.clicked.connect(self.import_database)
         self.ui.pushButton_4.clicked.connect(self.export_database)
         self.ui.pushButton_5.clicked.connect(self.generate_report)
-
+        self.ui.pushButton_6.clicked.connect(self.create_info)
     def check_url(self):
         """Проверка URL с выводом результатов в UI."""
         try:
@@ -94,7 +94,23 @@ class MainApp(QMainWindow):
         else:
             self.ui.outputEdit.append("Формирование отчета не произошел")
 
-
+    def create_info(self):
+      """Creates a new window displaying information about phishing."""
+      msg_box = QMessageBox()
+      msg_box.setWindowTitle("Как распознать фишинг")
+      msg_box.setText(
+          "Основные признаки фишинга:\n\n"
+          "1. **Неожиданные письма/сообщения:** Будьте осторожны, если получили сообщение от неизвестного отправителя или от известного, но с неожиданным содержанием.\n"
+          "2. **Запросы личной информации:** Легитимные организации редко запрашивают личную информацию (пароли, номера карт) по электронной почте.\n"
+          "3. **Срочность/угрозы:** Фишинговые письма часто создают ощущение срочности или содержат угрозы для принуждения к действиям.\n"
+          "4. **Подозрительные ссылки:** Проверяйте ссылки перед тем, как на них нажимать. Обратите внимание на доменное имя и написание ссылки. \n"
+          "5. **Ошибки в тексте:** Фишинговые письма могут содержать грамматические или стилистические ошибки.\n"
+          "6. **Несоответствие запрошенных данных:** Если в письме есть подозрительные несоответствия в данных, это может говорить о фишинге. \n"
+          "7. **Проверяйте отправителя:** Перепроверяйте адрес электронной почты отправителя перед тем, как переходить по ссылкам.\n"
+          "\nЕсли у вас есть сомнения, лучше проверьте информацию по телефону или на официальном сайте организации, которая упоминается в сообщении."
+      )
+      msg_box.setIcon(QMessageBox.Icon.Information)
+      msg_box.exec()
 def main():
     app = QApplication(sys.argv)  # Создаем приложение
     window = MainApp()
