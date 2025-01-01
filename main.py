@@ -4,9 +4,8 @@ from design import Ui_MainWindow
 from database import init_db, get_links, export_links, import_links
 from checker import check_url_ssl, check_url_whois, parse_whois_info
 from reports import save_results_pdf
-from google_save_browsing_api import check_url_safety as google_api
 from datetime import datetime
-
+from google_save_browsing_api import UrlCheckerGoogle as google_api
 
 class MainApp(QMainWindow):
     def __init__(self):
@@ -34,7 +33,7 @@ class MainApp(QMainWindow):
             is_ssl = check_url_ssl(url)
             whois_info = check_url_whois(url)
             status = "Безопасен" if is_ssl else "Подозрительный"
-            google_response = google_api(url)
+            google_response = google_api().UrlInfo(url)
 
             # Google Safe Browsing
             google_color = "green" if "безопасно" in google_response.lower() else "red"
