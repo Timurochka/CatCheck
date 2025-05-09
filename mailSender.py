@@ -6,8 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-PASSWORD1 = "qwerty123456/"
-password = "enuu pplc zkmq tbro"
+
 def sendEmail(pdf_path,subject, body, to_email, from_email):
     try:
         # Создаем объект сообщения
@@ -45,6 +44,6 @@ if __name__ == "__main__":
     sendEmail(  pdf_path="1.pdf",
                     subject="afs",
                     body="body",
-                    to_email='ayzat2142@gmail.com',  # Замените на реальный email
-                    from_email='catcheckrobot@gmail.com'  # Замените на реальный email
+                    to_email='',  # Замените на реальный email
+                    from_email=''  # Замените на реальный email
                 )
